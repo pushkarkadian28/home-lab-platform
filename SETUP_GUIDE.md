@@ -45,7 +45,7 @@ Leave password authentication on for now. Ansible will disable it in the next st
 From your local machine, clone the repo and set your inventory:
 
 ```bash
-git clone https://github.com/yourusername/home-lab-platform.git
+git clone https://github.com/pushkarkadian28/home-lab-platform.git
 cd home-lab-platform/ansible
 cp inventory.example.ini inventory.ini
 ```
@@ -66,6 +66,17 @@ Edit `inventory.ini` with your server's IP and SSH user, then run:
 
 ```bash
 ansible-playbook -i inventory.ini playbooks/harden.yml
+```
+
+If the command "ansible-playbook -i inventory.ini playbooks/harden.yml" gives an error message: "Task failed: Timed out waiting for become success or become password prompt."
+```bash
+echo "home2006 ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/ansible > /dev/null
+sudo chmod 440 /etc/sudoers.d/ansible
+sudo visudo -c
+```
+Should show:
+```
+/etc/sudoers.d/ansible: parsed OK
 ```
 
 This playbook:
