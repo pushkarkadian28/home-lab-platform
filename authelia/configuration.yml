@@ -1,0 +1,67 @@
+theme: dark
+
+server:
+  address: "tcp://:9091"
+
+log:
+  level: info
+
+totp:
+  issuer: homelab.example.com
+
+authentication_backend:
+  # Password reset is disabled because the notifier below writes to a local
+  # file instead of sending real email. A reset link nobody receives is not
+  # useful. Switch the notifier to smtp and remove this line once you have
+  # a mail relay configured, then add identity_validation.reset_password.jwt_secret.
+  password_reset:
+    disable: true
+  file:
+    path: /config/users_database.yml
+    password:
+      algorithm: argon2
+      argon2:
+        variant: argon2id
+        iterations: 3
+        memory: 65536
+        parallelism: 4
+        key_length: 32
+        salt_length: 16
+
+access_control:
+  default_policy: deny
+  rules:
+    - domain: "auth.example.com"
+      policy: bypass
+    - domain: "vault.example.com"
+      policy: two_factor
+    - domain: "*.example.com"
+      policy: two_factor
+
+session:
+  name: authelia_session
+  expiration: 1h
+  inactivity: 15m
+  remember_me: 1M
+  cookies:
+    - domain: example.com
+      authelia_url: https://auth.example.com
+
+regulation:
+  max_retries: 3
+  find_time: 2m
+  ban_time: 15m
+
+storage:
+  # encryption_key is required. Set via the AUTHELIA_STORAGE_ENCRYPTION_KEY
+  # environment variable in docker-compose.yml rather than hardcoding it here.
+  local:
+    path: /config/data/db.sqlite3
+
+notifier:
+  filesystem:
+    filename: /config/data/notification.txt
+  # Replace the filesystem notifier with SMTP once you have a
+  # mail relay configured. Filesystem mode is fine for initial setup
+  # but you will not receive real password reset emails until SMTP
+  # is configured.

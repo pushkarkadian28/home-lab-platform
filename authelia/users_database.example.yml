@@ -1,0 +1,13 @@
+# Copy this file to users_database.yml and replace with real users.
+# Generate a password hash with:
+#   docker run --rm authelia/authelia:latest authelia crypto hash generate argon2 --password 'yourpassword'
+# Never commit users_database.yml with real hashes to a public repo.
+
+users:
+  admin:
+    disabled: false
+    displayname: "Admin User"
+    password: "$argon2id$v=19$m=65536,t=3,p=4$replace_with_generated_hash"
+    email: admin@example.com
+    groups:
+      - admins

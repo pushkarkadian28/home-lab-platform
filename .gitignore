@@ -1,0 +1,16 @@
+# Secrets, never commit these
+.env
+authelia/users_database.yml
+ansible/inventory.ini
+
+# Traefik runtime data
+traefik-certs/
+*.acme.json
+
+# Ansible
+*.retry
+.vault_pass
+
+# OS / editor noise
+.DS_Store
+*.swp

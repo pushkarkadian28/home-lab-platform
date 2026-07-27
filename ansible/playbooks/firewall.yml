@@ -1,0 +1,30 @@
+---
+- name: Apply Docker-aware firewall rules
+  hosts: homelab
+  become: true
+
+  tasks:
+    - name: Prevent Docker from bypassing UFW
+      copy:
+        dest: /etc/docker/daemon.json
+        content: |
+          {
+            "iptables": true,
+            "userland-proxy": false
+          }
+      notify: restart docker
+
+    - name: Confirm no unexpected ports are listening publicly
+      command: ss -tulpn
+      register: listening_ports
+      changed_when: false
+
+    - name: Show listening ports for manual review
+      debug:
+        var: listening_ports.stdout_lines
+
+  handlers:
+    - name: restart docker
+      systemd:
+        name: docker
+        state: restarted
